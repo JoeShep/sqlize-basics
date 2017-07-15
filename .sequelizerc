@@ -1,0 +1,10 @@
+// configure Sequelize for our project, specifying the paths to files required by Sequelize. 
+
+const path = require('path');
+
+module.exports = {
+  "config": path.resolve('./server/config', './config.json'),
+  "models-path": path.resolve('./server/models'),
+  "seeds-path": path.resolve('./server/seeds'),
+  "migrations-path": path.resolve('./server/migrations')
+};
