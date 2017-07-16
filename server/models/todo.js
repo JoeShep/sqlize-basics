@@ -2,8 +2,10 @@
 
 module.exports = (sequelize, DataTypes) => {
   const Todo = sequelize.define('Todo', {
-    title: DataTypes.STRING,
-    allowNull: false
+    title: {
+      type: DataTypes.STRING,
+      allowNull: false
+    }
   }, {
     classMethods: {
       associate: (models) => {

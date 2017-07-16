@@ -6,3 +6,14 @@ app.set('port', port);
 
 const server = http.createServer(app);
 server.listen(port);
+
+
+// hmmm. gotta look into this
+// from https://groundberry.github.io/development/2016/11/04/build-your-node-app-with-express-and-sequelize.html
+// With Sequelize we can automatically sync models and schema every time we start the app. 
+// var models = require('../models');
+// models.sequelize.sync().then(function() {
+//   server.listen(port);
+//   server.on('error', onError);
+//   server.on('listening', onListening);
+// });
