@@ -4,6 +4,8 @@ const { Router } = require('express');
 const { todos, todoItems } = require('../controllers');
 const router = Router();
 
+router.use(require('./auth'));
+
 // if the http request is a GET for the whole API
 router.get('/api', (req, res, next) => res.status(200).send({
   message: "Welcome to the todos API!"
