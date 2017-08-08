@@ -16,6 +16,8 @@ router.post('/api/todos', todos.create);
 router.get('/api/todos', todos.list);
 
 // todos items
+
+// wait, what is this?
 router.post('/api/todo/:todoId/items', todoItems.create)
 
 module.exports = router;

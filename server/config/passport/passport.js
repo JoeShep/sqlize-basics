@@ -1,7 +1,16 @@
+// http://toon.io/understanding-passportjs-authentication-flow/
+
 'use strict';
 const passport = require('passport')
 const bCrypt = require('bcrypt-nodejs');
 const { User } = require('../../models');
+// Declare what request (req) fields our usernameField
+// and passwordField (passport variables) are
+const credentials = {
+  usernameField: "email",
+  passwordField: "password",
+  passReqToCallback: true //allows us to pass the entire request to the callback. Particularly useful for signing up. Why?
+}
 
 // Passport has to save a user ID in the session,
 // and it uses this to manage retrieving the user details when needed.
@@ -25,18 +34,14 @@ passport.deserializeUser(function(id, done) {
   });
 });
 
+// The Local Strategy allows us to authenticate users by
+// looking up their data in the app's database.
 module.exports = () => {
   const {Strategy} = require('passport-local');
 
-  // Declare what request (req) fields our usernameField
-  // and passwordField (passport variables) are
   passport.use('local-signup', new Strategy(
-    // Strategy takes 2 args here: an obj and a callback function
-    {
-      usernameField: "email",
-      passwordField: "password",
-      passReqToCallback: true //allows us to pass the entire request to the callback. Particularly useful for signing up. Why?
-    },
+    // Strategy takes 2 args here: the credentials obj defined at to pof page and a callback function
+    credentials,
     // callback
     (req, email, password, done) => {
       // define a function to call if the user is not already in the db
@@ -69,4 +74,31 @@ module.exports = () => {
       });
     }
   ));
+
+  //LOCAL SIGNIN
+  passport.use('local-signin', new Strategy(credentials, (req, email, password, done) => {
+    // const User = user;
+    const isValidPassword = (userpass, password) => {
+      // hashes the passed-in password and compares it to the hashed pword from Firebase
+      return bCrypt.compareSync(password, userpass);
+    }
+
+    User.findOne({ where: {email} })
+    .then( (user) => {
+      if (!user) {
+        return done(null, false, {message: 'Email does not exist'});
+      }
+      if (!isValidPassword(user.password, password)) {
+        return done(null, false, {message: 'Incorrect password.'});
+      }
+      const userinfo = user.get();
+      return done(null, userinfo);
+    })
+    .catch( (err) => {
+      console.log("Error:", err);
+      return done(null, false, {
+        message: 'Something went wrong with your sign in'
+      });
+    });
+  }));
 };
